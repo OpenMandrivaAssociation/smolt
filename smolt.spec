@@ -1,13 +1,14 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.2
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
 Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
 Patch0:	smolt-1.2-mandriva-release.patch
+Patch1: smolt-1.2-remove-checkin.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Requires: dbus-python
@@ -62,6 +63,7 @@ ensure that deps are kept small.
 %prep
 %setup -q
 %patch0 -p1 -b .mandriva-release
+%patch1 -p1 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
 
@@ -139,10 +141,7 @@ from string import Template
 from random import randint
 
 cron_file = Template('''# Runs the smolt checkin client
-# Please note that calling with -c will cause smolt to pause a random amount of
-# time between 0 and 3 days before actually sending, this is to prevent ddos on
-# the server
-$minute $hour $day * * smolt [ -r /ets/sysconfig/smolt ]  && . /etc/sysconfig/smolt && [ $ENABLE_MONTHLY_UPDATE = 1 ] && /usr/bin/smoltSendProfile -c > /dev/null 2>&1
+$minute $hour $day * * smolt [ -r /ets/sysconfig/smolt ]  && . /etc/sysconfig/smolt && [ $ENABLE_MONTHLY_UPDATE = 1 ] && /usr/bin/smoltSendProfile -a > /dev/null 2>&1
 ''')
 
 def main():
