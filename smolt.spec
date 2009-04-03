@@ -1,7 +1,7 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.2
-Release: %mkrel 2
+Release: %mkrel 3
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
@@ -141,7 +141,7 @@ from string import Template
 from random import randint
 
 cron_file = Template('''# Runs the smolt checkin client
-$minute $hour $day * * smolt [ -r /ets/sysconfig/smolt ]  && . /etc/sysconfig/smolt && [ $ENABLE_MONTHLY_UPDATE = 1 ] && /usr/bin/smoltSendProfile -a > /dev/null 2>&1
+$minute $hour $day * * smolt [ -r /etc/sysconfig/smolt ]  && . /etc/sysconfig/smolt && [ $ENABLE_MONTHLY_UPDATE = 1 ] && /usr/bin/smoltSendProfile -a > /dev/null 2>&1
 ''')
 
 def main():
