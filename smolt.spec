@@ -1,14 +1,14 @@
 Name: smolt
 Summary: Hardware profiler
-Version: 1.2
-Release: %mkrel 3
+Version: 1.3.2
+Release: %mkrel 1
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
 Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
-Patch0:	smolt-1.2-mandriva-release.patch
-Patch1: smolt-1.2-remove-checkin.patch
+#Patch0:	smolt-1.2-mandriva-release.patch
+Patch1: smolt-1.3.2-remove-checkin.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Requires: dbus-python
@@ -62,8 +62,8 @@ ensure that deps are kept small.
 
 %prep
 %setup -q
-%patch0 -p1 -b .mandriva-release
-%patch1 -p1 -b .checkin
+#%patch0 -p1 -b .mandriva-release
+%patch1 -p0 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
 
@@ -79,10 +79,11 @@ popd
 # install -d -m 0755 smoon/ %{buildroot}/%{_datadir}/%{name}/smoon/
 mkdir -p %{buildroot}/%{_mandir}/man1/
 #cp -adv smoon/* %{buildroot}/%{_datadir}/%{name}/smoon/
-cp -adv client/simplejson %{buildroot}/%{_datadir}/%{name}/client/
+#cp -adv client/simplejson %{buildroot}/%{_datadir}/%{name}/client/
 cp client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/man/* %{buildroot}/%{_mandir}/man1/
 
 mkdir -p %{buildroot}/%{_sysconfdir}/sysconfig/
@@ -102,12 +103,13 @@ mv client/icons/smolt-icon-24.png %{buildroot}/%{_datadir}/icons/hicolor/24x24/a
 mv client/icons/smolt-icon-32.png %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/smolt.png
 cp -adv client/icons/* %{buildroot}/%{_datadir}/%{name}/client/icons/
 
+
 rm -f %{buildroot}/%{_bindir}/smoltSendProfile %{buildroot}/%{_bindir}/smoltDeleteProfile %{buildroot}/%{_bindir}/smoltGui
 ln -s %{_datadir}/%{name}/client/sendProfile.py %{buildroot}/%{_bindir}/smoltSendProfile
 ln -s %{_datadir}/%{name}/client/deleteProfile.py %{buildroot}/%{_bindir}/smoltDeleteProfile
 ln -s %{_datadir}/%{name}/client/smoltGui.py %{buildroot}/%{_bindir}/smoltGui
 
-ln -s %{_sysconfdir}/%{name}/config.py %{buildroot}/%{_datadir}/%{name}/client/config.py
+#ln -s %{_sysconfdir}/%{name}/config.py %{buildroot}/%{_datadir}/%{name}/client/config.py
 
 desktop-file-install --dir=%{buildroot}/%{_datadir}/applications client/smolt.desktop
 %find_lang %{name}
