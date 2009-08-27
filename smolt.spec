@@ -1,13 +1,12 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.3.2
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
 Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
-#Patch0:	smolt-1.2-mandriva-release.patch
 Patch1: smolt-1.3.2-remove-checkin.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -62,7 +61,6 @@ ensure that deps are kept small.
 
 %prep
 %setup -q
-#%patch0 -p1 -b .mandriva-release
 %patch1 -p0 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
@@ -109,7 +107,7 @@ ln -s %{_datadir}/%{name}/client/sendProfile.py %{buildroot}/%{_bindir}/smoltSen
 ln -s %{_datadir}/%{name}/client/deleteProfile.py %{buildroot}/%{_bindir}/smoltDeleteProfile
 ln -s %{_datadir}/%{name}/client/smoltGui.py %{buildroot}/%{_bindir}/smoltGui
 
-#ln -s %{_sysconfdir}/%{name}/config.py %{buildroot}/%{_datadir}/%{name}/client/config.py
+ln -sf %{_sysconfdir}/%{name}/config.py %{buildroot}/%{_datadir}/%{name}/client/config.py
 
 desktop-file-install --dir=%{buildroot}/%{_datadir}/applications client/smolt.desktop
 %find_lang %{name}
