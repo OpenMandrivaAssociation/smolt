@@ -1,7 +1,7 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.3.2
-Release: %mkrel 2
+Release: %mkrel 3
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
@@ -54,6 +54,8 @@ This package contains the server portion
 Summary: Fedora hardware profiler gui
 Group: System/Configuration/Hardware
 Requires: smolt = %{version}
+Requires: python-qt4-core
+Requires: python-qt4-gui
 
 %description gui
 Provides smolt's gui functionality.  Not included in the default package to
@@ -61,7 +63,7 @@ ensure that deps are kept small.
 
 %prep
 %setup -q
-%patch1 -p0 -b .checkin
+%patch1 -p1 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
 
