@@ -1,7 +1,7 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.4
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
@@ -12,9 +12,10 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Requires: dbus-python
 Requires: python-urlgrabber
-Requires: gawk
 Requires: python-paste
+Requires: python-simplejson
 Requires: lsb-release
+Requires: hal
 BuildArch: noarch
 BuildRequires: gettext
 BuildRequires: desktop-file-utils
