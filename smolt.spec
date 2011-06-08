@@ -1,7 +1,7 @@
 Name: smolt
 Summary: Hardware profiler
-Version: 1.4.2
-Release: %mkrel 2
+Version: 1.4.3
+Release: %mkrel 1
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
@@ -64,7 +64,7 @@ ensure that deps are kept small.
 
 %prep
 %setup -q
-%patch1 -p1 -b .checkin
+#patch1 -p1 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
 
@@ -78,14 +78,17 @@ pushd client
 %makeinstall_std
 popd
 # install -d -m 0755 smoon/ %{buildroot}/%{_datadir}/%{name}/smoon/
-mkdir -p %{buildroot}/%{_mandir}/man1/
 #cp -adv smoon/* %{buildroot}/%{_datadir}/%{name}/smoon/
 #cp -adv client/simplejson %{buildroot}/%{_datadir}/%{name}/client/
 cp client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
 cp client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
-cp client/man/* %{buildroot}/%{_mandir}/man1/
+
+%{__install} -m755 -d %{buildroot}/%{_mandir}/man1/
+%{__install} -m644 client/man/smoltDeleteProfile.1 %{buildroot}/%{_mandir}/man1/
+%{__install} -m644 client/man/smoltGui.1 %{buildroot}/%{_mandir}/man1/
+%{__install} -m644 client/man/smoltSendProfile.1 %{buildroot}/%{_mandir}/man1/
 
 mkdir -p %{buildroot}/%{_sysconfdir}/sysconfig/
 
@@ -119,6 +122,12 @@ desktop-file-install --dir=%{buildroot}/%{_datadir}/applications client/smolt.de
 rm -f %{buildroot}/etc/init.d/smolt
 rm -f %{buildroot}/etc/smolt/hw-uuid
 rm -rf %{buildroot}/%{_datadir}/applications/fedora-smolt.desktop
+
+# Cleanup sugar-specific files
+rm -rf %{buildroot}/%{_datadir}/sugar/
+
+# Cleanup gz man files produces by client/Makefile (install-main target)
+rm -rf %{buildroot}/%{_mandir}/man1/*.gz
 
 touch %{buildroot}/%{_sysconfdir}/sysconfig/hw-uuid
 
