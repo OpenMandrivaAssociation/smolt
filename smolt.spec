@@ -7,6 +7,7 @@ Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
 Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
+Patch0:	hwdata.py-pciids-path.patch
 Patch1: smolt-1.3.2-remove-checkin.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -64,6 +65,7 @@ ensure that deps are kept small.
 
 %prep
 %setup -q
+%patch0 -p1 -b pciids
 #patch1 -p1 -b .checkin
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
@@ -80,35 +82,38 @@ popd
 # install -d -m 0755 smoon/ %{buildroot}/%{_datadir}/%{name}/smoon/
 #cp -adv smoon/* %{buildroot}/%{_datadir}/%{name}/smoon/
 #cp -adv client/simplejson %{buildroot}/%{_datadir}/%{name}/client/
-cp client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
-cp client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
-cp client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
-cp client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__mkdir} -p %{buildroot}/%{_datadir}/%{name}/client/
+%{__mkdir} -p %{buildroot}/%{_mandir}/man1/
+%{__cp} client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} client/devicelist.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} client/hwdata.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} -av client/distros/ %{buildroot}/%{_datadir}/%{name}/client/distros/
+%{__cp} client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
+%{__cp} client/man/* %{buildroot}/%{_mandir}/man1/
 
-%{__install} -m755 -d %{buildroot}/%{_mandir}/man1/
-%{__install} -m644 client/man/smoltDeleteProfile.1 %{buildroot}/%{_mandir}/man1/
-%{__install} -m644 client/man/smoltGui.1 %{buildroot}/%{_mandir}/man1/
-%{__install} -m644 client/man/smoltSendProfile.1 %{buildroot}/%{_mandir}/man1/
-
-mkdir -p %{buildroot}/%{_sysconfdir}/sysconfig/
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/sysconfig/
 
 # Icons
-mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/16x16/apps/
-mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/
-mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/
-mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/
+%{__mkdir} -p %{buildroot}/%{_datadir}/icons/hicolor/16x16/apps/
+%{__mkdir} -p %{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/
+%{__mkdir} -p %{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/
+%{__mkdir} -p %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/
 
-mkdir -p %{buildroot}/%{_datadir}/firstboot/pixmaps/
-mkdir -p %{buildroot}/%{_datadir}/firstboot/themes/default/
+%{__mkdir} -p %{buildroot}/%{_datadir}/firstboot/pixmaps/
+%{__mkdir} -p %{buildroot}/%{_datadir}/firstboot/themes/default/
 
-mv client/icons/smolt-icon-16.png %{buildroot}/%{_datadir}/icons/hicolor/16x16/apps/smolt.png
-mv client/icons/smolt-icon-22.png %{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/smolt.png
-mv client/icons/smolt-icon-24.png %{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/smolt.png
-mv client/icons/smolt-icon-32.png %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/smolt.png
-cp -adv client/icons/* %{buildroot}/%{_datadir}/%{name}/client/icons/
+%{__mv} client/icons/smolt-icon-16.png %{buildroot}/%{_datadir}/icons/hicolor/16x16/apps/smolt.png
+%{__mv} client/icons/smolt-icon-22.png %{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/smolt.png
+%{__mv} client/icons/smolt-icon-24.png %{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/smolt.png
+%{__mv} client/icons/smolt-icon-32.png %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/smolt.png
+%{__cp} -adv client/icons/* %{buildroot}/%{_datadir}/%{name}/client/icons/
 
 
-rm -f %{buildroot}/%{_bindir}/smoltSendProfile %{buildroot}/%{_bindir}/smoltDeleteProfile %{buildroot}/%{_bindir}/smoltGui
+%{__rm} -f %{buildroot}/%{_bindir}/smoltSendProfile
+%{__rm} -f %{buildroot}/%{_bindir}/smoltDeleteProfile
+%{__rm} -f %{buildroot}/%{_bindir}/smoltGui
 ln -s %{_datadir}/%{name}/client/sendProfile.py %{buildroot}/%{_bindir}/smoltSendProfile
 ln -s %{_datadir}/%{name}/client/deleteProfile.py %{buildroot}/%{_bindir}/smoltDeleteProfile
 ln -s %{_datadir}/%{name}/client/smoltGui.py %{buildroot}/%{_bindir}/smoltGui
@@ -119,21 +124,21 @@ desktop-file-install --dir=%{buildroot}/%{_datadir}/applications client/smolt.de
 %find_lang %{name}
 
 # Cleanup from the Makefile (will be cleaned up when it is finalized)
-rm -f %{buildroot}/etc/init.d/smolt
-rm -f %{buildroot}/etc/smolt/hw-uuid
-rm -rf %{buildroot}/%{_datadir}/applications/fedora-smolt.desktop
+%{__rm} -f %{buildroot}/etc/init.d/smolt
+%{__rm} -f %{buildroot}/etc/smolt/hw-uuid
+%{__rm} -rf %{buildroot}/%{_datadir}/applications/fedora-smolt.desktop
 
 # Cleanup sugar-specific files
-rm -rf %{buildroot}/%{_datadir}/sugar/
+%{__rm} -rf %{buildroot}/%{_datadir}/sugar/
 
 # Cleanup gz man files produces by client/Makefile (install-main target)
-rm -rf %{buildroot}/%{_mandir}/man1/*.gz
+%{__rm} -rf %{buildroot}/%{_mandir}/man1/*.gz
 
 touch %{buildroot}/%{_sysconfdir}/sysconfig/hw-uuid
 
 echo 'ENABLE_MONTHLY_UPDATE=0' > %{buildroot}/%{_sysconfdir}/sysconfig/smolt
 
-install -m 644 %{SOURCE1} README.install.urpmi
+%{__install} -m 644 %{SOURCE1} README.install.urpmi
 
 %clean
 rm -rf %{buildroot}
@@ -178,14 +183,14 @@ fi
 %dir %{_datadir}/%{name}
 %config(noreplace) %dir %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/sysconfig/smolt
-%{_datadir}/%{name}/client
-%{_datadir}/%{name}/doc
-%{_bindir}/smoltSendProfile
-%{_bindir}/smoltDeleteProfile
 %config(noreplace) /%{_sysconfdir}/%{name}/config*
 %ghost %config(noreplace) %{_sysconfdir}/cron.d/%{name}
-%{_mandir}/man1/*
 %ghost %{_sysconfdir}/sysconfig/hw-uuid
+%{_bindir}/smoltSendProfile
+%{_bindir}/smoltDeleteProfile
+%{_datadir}/%{name}/client
+%{_datadir}/%{name}/doc
+%{_mandir}/man1/
 
 %if 0
 %files server
@@ -195,7 +200,7 @@ fi
 
 %files gui
 %defattr(-,root,root,-)
+%{_bindir}/smoltGui
 %{_datadir}/applications/smolt.desktop
 %{_datadir}/icons/hicolor/*x*/apps/smolt.png
-%{_bindir}/smoltGui
 
