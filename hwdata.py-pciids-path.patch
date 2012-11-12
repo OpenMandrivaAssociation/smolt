@@ -1,0 +1,11 @@
+--- smolt-1.4.3/client/hwdata.py.orig	2011-06-08 16:20:25.368535589 +0200
++++ smolt-1.4.3/client/hwdata.py	2011-06-08 16:20:34.099542264 +0200
+@@ -20,7 +20,7 @@
+         self.vendors['usb'] = self.device_map('usb')
+ 
+     def device_map(self, bus='pci'):
+-        fn = "/usr/share/hwdata/%s.ids" % bus
++        fn = "/usr/share/%s.ids" % bus
+         fo = open(fn, 'r')
+         vendors = {}
+         curvendor = None
