@@ -1,22 +1,26 @@
 Name: smolt
 Summary: Hardware profiler
 Version: 1.4.3
-Release: %mkrel 1
+Release: 10
 License: GPLv2+
 Group: System/Configuration/Hardware
 URL: http://fedorahosted.org/smolt
 Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
-Patch0:	hwdata.py-pciids-path.patch
+Patch0: hwdata.py-pciids-path.patch
 Patch1: smolt-1.3.2-remove-checkin.patch
+Patch2: smolt-1.4.2.2-config.patch
+Patch3: smolt-linux3.patch
+Patch4: smolt-1.4.3-policy.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 Requires: dbus-python
 Requires: python-urlgrabber
 Requires: python-paste
 Requires: python-simplejson
+Requires: python-sip
 Requires: lsb-release
-Requires: hal
+#Requires: hal
 BuildArch: noarch
 BuildRequires: gettext
 BuildRequires: desktop-file-utils
@@ -67,6 +71,9 @@ ensure that deps are kept small.
 %setup -q
 %patch0 -p1 -b pciids
 #patch1 -p1 -b .checkin
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 sed -i -e "s/smolt\.png/smolt/" -e "s/the Fedora Project/smolts.org/"  client/smolt.desktop
 find -name ".git*" -exec rm {} \;
 
@@ -84,14 +91,14 @@ popd
 #cp -adv client/simplejson %{buildroot}/%{_datadir}/%{name}/client/
 %{__mkdir} -p %{buildroot}/%{_datadir}/%{name}/client/
 %{__mkdir} -p %{buildroot}/%{_mandir}/man1/
-%{__cp} client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} client/devicelist.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} client/hwdata.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} -av client/distros/ %{buildroot}/%{_datadir}/%{name}/client/distros/
-%{__cp} client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
-%{__cp} client/man/* %{buildroot}/%{_mandir}/man1/
+cp client/scan.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/gate.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/os_detect.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/devicelist.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/hwdata.py %{buildroot}/%{_datadir}/%{name}/client/
+cp -av client/distros/ %{buildroot}/%{_datadir}/%{name}/client/distros/
+cp client/fs_util.py %{buildroot}/%{_datadir}/%{name}/client/
+cp client/man/* %{buildroot}/%{_mandir}/man1/
 
 %{__mkdir} -p %{buildroot}/%{_sysconfdir}/sysconfig/
 
@@ -108,7 +115,7 @@ popd
 %{__mv} client/icons/smolt-icon-22.png %{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/smolt.png
 %{__mv} client/icons/smolt-icon-24.png %{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/smolt.png
 %{__mv} client/icons/smolt-icon-32.png %{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/smolt.png
-%{__cp} -adv client/icons/* %{buildroot}/%{_datadir}/%{name}/client/icons/
+cp -adv client/icons/* %{buildroot}/%{_datadir}/%{name}/client/icons/
 
 
 %{__rm} -f %{buildroot}/%{_bindir}/smoltSendProfile
@@ -152,6 +159,8 @@ then
     cat /proc/sys/kernel/random/uuid > /etc/sysconfig/hw-uuid
     chmod 0644 /etc/sysconfig/hw-uuid
     chown root:root /etc/sysconfig/hw-uuid
+    cat /proc/sys/kernel/random/uuid > /etc/smolt/hw-uuid
+    chmod 0644 /etc/smolt/hw-uuid
     python > /etc/cron.d/smolt << 'EOF'
 
 from string import Template
@@ -203,4 +212,59 @@ fi
 %{_bindir}/smoltGui
 %{_datadir}/applications/smolt.desktop
 %{_datadir}/icons/hicolor/*x*/apps/smolt.png
+
+
+
+%changelog
+* Wed Jun 08 2011 Alexandre Lissy <alissy@mandriva.com> 1.4.3-1mdv2011.0
++ Revision: 683234
+- Needed fixes to have working 1.4.3 working
+- Updating Smolt sources to latest stable 1.4.3
+
+* Wed Dec 08 2010 Oden Eriksson <oeriksson@mandriva.com> 1.4.2-2mdv2011.0
++ Revision: 614927
+- the mass rebuild of 2010.1 packages
+
+* Sat Jan 30 2010 Frederik Himpe <fhimpe@mandriva.org> 1.4.2-1mdv2010.1
++ Revision: 498574
+- Update to new version 1.4.2
+
+* Wed Oct 28 2009 Frederik Himpe <fhimpe@mandriva.org> 1.4-2mdv2010.0
++ Revision: 459876
+- Remove Requires: gawk: already required by basesystem-minimal
+- Add Requires: python-simplejson hal
+
+* Tue Sep 15 2009 Frederik Himpe <fhimpe@mandriva.org> 1.4-1mdv2010.0
++ Revision: 443190
+- update to new version 1.4
+
+* Thu Aug 27 2009 Frederik Himpe <fhimpe@mandriva.org> 1.3.2-3mdv2010.0
++ Revision: 421754
+- Fix checkin path
+- smolt-gui now is a python-qt4 application
+
+* Thu Aug 27 2009 Frederik Himpe <fhimpe@mandriva.org> 1.3.2-2mdv2010.0
++ Revision: 421734
+- Fix config.py symlink
+
+* Tue Aug 11 2009 Emmanuel Andry <eandry@mandriva.org> 1.3.2-1mdv2010.0
++ Revision: 415162
+- New version 1.3.2
+- drop P0 (merged upstream)
+- rediff P1
+
+* Fri Apr 03 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-3mdv2009.1
++ Revision: 363900
+- Fix type in cron script
+
+* Mon Mar 23 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-2mdv2009.1
++ Revision: 360734
+- Remove -c (checkin) option because we don't create a "fake" service,
+  instead use -a in the cron script to automatically submit the
+  profile
+
+* Sat Mar 21 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-1mdv2009.1
++ Revision: 359504
+- Import Smolt into Mandriva repositories, based on Fedora's pacakge
+- create smolt
 

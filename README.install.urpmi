@@ -1,0 +1,11 @@
+The Smolt hardware collector will not send any data until you do
+so manually.
+
+To send your hardware profile to http://smolts.org, run the
+smoltSendProfile command. If you have installed the smolt-gui package,
+you can also start Smolt from the applications menu in Tools -
+System Tools.
+
+If you want to update your hardware profile automatically on a monthly
+basis, edit the file /etc/sysconfig/smolt and set
+ENABLE_MONTHLY_UPDATE=1
