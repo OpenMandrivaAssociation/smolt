@@ -1,18 +1,17 @@
-Name: smolt
+Name:    smolt
 Summary: Hardware profiler
 Version: 1.4.3
 Release: 10
 License: GPLv2+
-Group: System/Configuration/Hardware
-URL: http://fedorahosted.org/smolt
-Source: https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
+Group:   System/Configuration/Hardware
+URL:     http://fedorahosted.org/smolt
+Source:  https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
-Patch0: hwdata.py-pciids-path.patch
-Patch1: smolt-1.3.2-remove-checkin.patch
-Patch2: smolt-1.4.2.2-config.patch
-Patch3: smolt-linux3.patch
-Patch4: smolt-1.4.3-policy.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Patch0:  hwdata.py-pciids-path.patch
+Patch1:  smolt-1.3.2-remove-checkin.patch
+Patch2:  smolt-1.4.2.2-config.patch
+Patch3:  smolt-linux3.patch
+Patch4:  smolt-1.4.3-policy.patch
 
 Requires: dbus-python
 Requires: python-urlgrabber
@@ -82,7 +81,6 @@ cd client/
 make
 
 %install
-rm -rf %{buildroot}
 pushd client
 %makeinstall_std
 popd
@@ -147,9 +145,6 @@ echo 'ENABLE_MONTHLY_UPDATE=0' > %{buildroot}/%{_sysconfdir}/sysconfig/smolt
 
 %{__install} -m 644 %{SOURCE1} README.install.urpmi
 
-%clean
-rm -rf %{buildroot}
-
 %pre
 %_pre_useradd smolt %{_datadir}/%{name} /sbin/nologin > /dev/null 2>&1 || :
 
@@ -199,72 +194,14 @@ fi
 %{_bindir}/smoltDeleteProfile
 %{_datadir}/%{name}/client
 %{_datadir}/%{name}/doc
-%{_mandir}/man1/
+%{_mandir}/man1/*
 
 %if 0
 %files server
-%defattr(-,root,root,-)
 %{_datadir}/%{name}/smoon
 %endif
 
 %files gui
-%defattr(-,root,root,-)
 %{_bindir}/smoltGui
 %{_datadir}/applications/smolt.desktop
 %{_datadir}/icons/hicolor/*x*/apps/smolt.png
-
-
-
-%changelog
-* Wed Jun 08 2011 Alexandre Lissy <alissy@mandriva.com> 1.4.3-1mdv2011.0
-+ Revision: 683234
-- Needed fixes to have working 1.4.3 working
-- Updating Smolt sources to latest stable 1.4.3
-
-* Wed Dec 08 2010 Oden Eriksson <oeriksson@mandriva.com> 1.4.2-2mdv2011.0
-+ Revision: 614927
-- the mass rebuild of 2010.1 packages
-
-* Sat Jan 30 2010 Frederik Himpe <fhimpe@mandriva.org> 1.4.2-1mdv2010.1
-+ Revision: 498574
-- Update to new version 1.4.2
-
-* Wed Oct 28 2009 Frederik Himpe <fhimpe@mandriva.org> 1.4-2mdv2010.0
-+ Revision: 459876
-- Remove Requires: gawk: already required by basesystem-minimal
-- Add Requires: python-simplejson hal
-
-* Tue Sep 15 2009 Frederik Himpe <fhimpe@mandriva.org> 1.4-1mdv2010.0
-+ Revision: 443190
-- update to new version 1.4
-
-* Thu Aug 27 2009 Frederik Himpe <fhimpe@mandriva.org> 1.3.2-3mdv2010.0
-+ Revision: 421754
-- Fix checkin path
-- smolt-gui now is a python-qt4 application
-
-* Thu Aug 27 2009 Frederik Himpe <fhimpe@mandriva.org> 1.3.2-2mdv2010.0
-+ Revision: 421734
-- Fix config.py symlink
-
-* Tue Aug 11 2009 Emmanuel Andry <eandry@mandriva.org> 1.3.2-1mdv2010.0
-+ Revision: 415162
-- New version 1.3.2
-- drop P0 (merged upstream)
-- rediff P1
-
-* Fri Apr 03 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-3mdv2009.1
-+ Revision: 363900
-- Fix type in cron script
-
-* Mon Mar 23 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-2mdv2009.1
-+ Revision: 360734
-- Remove -c (checkin) option because we don't create a "fake" service,
-  instead use -a in the cron script to automatically submit the
-  profile
-
-* Sat Mar 21 2009 Frederik Himpe <fhimpe@mandriva.org> 1.2-1mdv2009.1
-+ Revision: 359504
-- Import Smolt into Mandriva repositories, based on Fedora's pacakge
-- create smolt
-
