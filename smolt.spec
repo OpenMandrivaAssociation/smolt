@@ -22,6 +22,7 @@ Requires: lsb-release
 #Requires: hal
 BuildArch: noarch
 BuildRequires: gettext
+BuildRequires: python-sip
 BuildRequires: desktop-file-utils
 
 Requires(pre): rpm-helper
