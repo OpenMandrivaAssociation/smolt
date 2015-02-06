@@ -1,7 +1,7 @@
 Name:    smolt
 Summary: Hardware profiler
 Version: 1.4.3
-Release: 11
+Release: 12
 License: GPLv2+
 Group:   System/Configuration/Hardware
 URL:     http://fedorahosted.org/smolt
