@@ -4,7 +4,7 @@ Version: 1.4.3
 Release: 12
 License: GPLv2+
 Group:   System/Configuration/Hardware
-URL:     http://fedorahosted.org/smolt
+URL:     https://fedorahosted.org/smolt
 Source:  https://fedorahosted.org/releases/s/m/%{name}/%{name}-%{version}.tar.gz
 Source1: README.install.urpmi
 Patch0:  hwdata.py-pciids-path.patch
